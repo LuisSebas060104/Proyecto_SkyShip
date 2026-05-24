@@ -21,7 +21,7 @@ function AdminDashboard() {
         });
         setEnvios(resEnvios.data);
 
-        const resUsuarios = await axios.get(`${apiUrl}/auth/usuarios`, {
+        const resUsuarios = await axios.get(`${apiUrl}/api/auth/usuarios`, {
           headers: { 'x-auth-token': token }
         });
         setUsuarios(resUsuarios.data);
