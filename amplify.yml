@@ -1,24 +1,23 @@
 version: 1
-# Las variables van aquí arriba, en el nivel raíz
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm install
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    # Como ya estamos en 'frontend' gracias a appRoot,
+    # el directorio de salida es simplemente 'dist'
+    baseDirectory: dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+appRoot: frontend
+# Aquí definimos la variable para que AWS la inyecte al construir
 env:
   variables:
     VITE_API_URL: "http://proyectoskyship-env.c3p3k9z6.us-west-1.elasticbeanstalk.com"
-
-applications:
-  - frontend:
-      phases:
-        preBuild:
-          commands:
-            - cd frontend
-            - npm install
-        build:
-          commands:
-            - npm run build
-      artifacts:
-        baseDirectory: frontend/dist
-        files:
-          - '**/*'
-      cache:
-        paths:
-          - node_modules/**/*
-    appRoot: frontend
