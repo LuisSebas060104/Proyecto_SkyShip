@@ -9,7 +9,7 @@ function Landing() {
 const manejarContacto = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('VITE_API_URL/api/contact', mensajeContacto);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/contact`, mensajeContacto);
       
       alert('¡Mensaje guardado en MongoDB con éxito!');
       
