@@ -7,7 +7,7 @@ applications:
             - npm install
         build:
           commands:
-            - VITE_API_URL="https://api.progawebskyship.click" npm run build
+            - VITE_API_URL="https://api.prograwebskyship.click" npm run build
       artifacts:
         baseDirectory: dist
         files:
