@@ -36,7 +36,7 @@ function AdminDashboard() {
   const cambiarEstado = async (id, nuevoEstado) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`VITE_API_URL/api/shipments/estado/${id}`, 
+      await axios.put(`${apiUrl}/api/shipments/estado/${id}`, 
         { estado: nuevoEstado },
         { headers: { 'x-auth-token': token } }
       );
@@ -50,7 +50,7 @@ function AdminDashboard() {
     if (!window.confirm("¿Eliminar esta guía permanentemente?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`VITE_API_URL/api/shipments/${id}`, {
+      await axios.delete(`${apiUrl}/api/shipments/${id}`, {
         headers: { 'x-auth-token': token }
       });
       setEnvios(envios.filter(envio => envio._id !== id));
@@ -63,7 +63,7 @@ function AdminDashboard() {
     if (!window.confirm("¿Dar de baja a este usuario?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`VITE_API_URL/api/auth/usuarios/${id}`, {
+      await axios.delete(`${apiUrl}/api/auth/usuarios/${id}`, {
         headers: { 'x-auth-token': token }
       });
       setUsuarios(usuarios.filter(usuario => usuario._id !== id));
