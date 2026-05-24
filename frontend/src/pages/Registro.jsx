@@ -17,17 +17,23 @@ function Registro() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const manejarSubmit = async (e) => {
+const manejarSubmit = async (e) => {
     e.preventDefault();
+    const url = `${import.meta.env.VITE_API_URL}/api/auth/registro`;
+    console.log("Intentando registro en:", url);
+    console.log("Datos enviados:", formData);
+
     try {
-      await axios.post('VITE_API_URL/api/auth/registro', formData);
-      alert('¡Cuenta creada con éxito! Ahora inicia sesión.');
-      navigate('/login'); 
+        await axios.post(url, formData);
+        console.log("Registro exitoso");
+        alert('¡Cuenta creada con éxito! Ahora inicia sesión.');
+        navigate('/login'); 
     } catch (error) {
-      console.error(error);
-      setError(error.response?.data?.mensaje || 'Hubo un error al registrarte');
+        console.error("Error en registro:", error);
+        console.error("Detalle del error:", error.response?.data);
+        setError(error.response?.data?.mensaje || 'Hubo un error al registrarte');
     }
-  };
+};
 
   return (
     <>
