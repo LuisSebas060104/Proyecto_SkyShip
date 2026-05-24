@@ -11,22 +11,26 @@ function Login() {
 
 const manejarSubmit = async (e) => {
     e.preventDefault();
+    const apiUrl = import.meta.env.VITE_API_URL;
+    console.log("Iniciando login hacia:", `${apiUrl}/api/auth/login`);
+
     try {
-      // Usamos backticks (`) para inyectar la variable y concatenar la ruta
-      const respuesta = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-        correo,
-        password
-      });
-      
-      const token = respuesta.data.token;
-      localStorage.setItem('token', token); 
-      navigate('/dashboard');
-      
+        const respuesta = await axios.post(`${apiUrl}/api/auth/login`, {
+            correo,
+            password
+        });
+        
+        console.log("Login exitoso, respuesta:", respuesta.data);
+        const token = respuesta.data.token;
+        localStorage.setItem('token', token); 
+        navigate('/dashboard');
+        
     } catch (error) {
-      console.error("Error real:", error); 
-      setMensaje(error.response?.data?.mensaje || 'Error interno del servidor');
+        console.error("Error en login:", error);
+        console.error("Detalle del error:", error.response ? error.response.data : error.message);
+        setMensaje(error.response?.data?.mensaje || 'Error interno del servidor');
     }
-  };
+};
 
   return (
     <>
