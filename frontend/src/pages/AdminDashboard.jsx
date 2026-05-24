@@ -15,12 +15,12 @@ function AdminDashboard() {
       if (!token) return navigate('/login');
 
       try {
-        const resEnvios = await axios.get('VITE_API_URL/api/shipments/todos', {
+        const resEnvios = await axios.get(`${apiUrl}/api/shipments/todos`, {
           headers: { 'x-auth-token': token }
         });
         setEnvios(resEnvios.data);
 
-        const resUsuarios = await axios.get('VITE_API_URL/auth/usuarios', {
+        const resUsuarios = await axios.get(`${apiUrl}/auth/usuarios`, {
           headers: { 'x-auth-token': token }
         });
         setUsuarios(resUsuarios.data);
