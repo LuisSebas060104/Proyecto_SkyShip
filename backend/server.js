@@ -9,9 +9,11 @@ const app = express();
 // Middlewares
 app.use(express.json());
 
+const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:5173';
+
 // Configuración de CORS para darle acceso libre a React
 app.use(cors({
-  origin: 'http://localhost:5173', // La dirección exacta de tu frontend
+  origin: allowedOrigin, // La dirección exacta de tu frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'x-auth-token'] // Los gafetes que permitimos
 }));

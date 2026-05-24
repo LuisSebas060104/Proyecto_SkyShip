@@ -12,7 +12,7 @@ function Login() {
   const manejarSubmit = async (e) => {
     e.preventDefault();
     try {
-      const respuesta = await axios.post('http://localhost:5000/api/auth/login', {
+      const respuesta = await axios.post('VITE_API_URL/api/auth/login', {
         correo,
         password
       });

@@ -15,12 +15,12 @@ function AdminDashboard() {
       if (!token) return navigate('/login');
 
       try {
-        const resEnvios = await axios.get('http://localhost:5000/api/shipments/todos', {
+        const resEnvios = await axios.get('VITE_API_URL/api/shipments/todos', {
           headers: { 'x-auth-token': token }
         });
         setEnvios(resEnvios.data);
 
-        const resUsuarios = await axios.get('http://localhost:5000/api/auth/usuarios', {
+        const resUsuarios = await axios.get('VITE_API_URL/auth/usuarios', {
           headers: { 'x-auth-token': token }
         });
         setUsuarios(resUsuarios.data);
@@ -36,7 +36,7 @@ function AdminDashboard() {
   const cambiarEstado = async (id, nuevoEstado) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:5000/api/shipments/estado/${id}`, 
+      await axios.put(`VITE_API_URL/api/shipments/estado/${id}`, 
         { estado: nuevoEstado },
         { headers: { 'x-auth-token': token } }
       );
@@ -50,7 +50,7 @@ function AdminDashboard() {
     if (!window.confirm("¿Eliminar esta guía permanentemente?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/shipments/${id}`, {
+      await axios.delete(`VITE_API_URL/api/shipments/${id}`, {
         headers: { 'x-auth-token': token }
       });
       setEnvios(envios.filter(envio => envio._id !== id));
@@ -63,7 +63,7 @@ function AdminDashboard() {
     if (!window.confirm("¿Dar de baja a este usuario?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/auth/usuarios/${id}`, {
+      await axios.delete(`VITE_API_URL/api/auth/usuarios/${id}`, {
         headers: { 'x-auth-token': token }
       });
       setUsuarios(usuarios.filter(usuario => usuario._id !== id));

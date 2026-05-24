@@ -20,7 +20,7 @@ function Registro() {
   const manejarSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/auth/registro', formData);
+      await axios.post('VITE_API_URL/api/auth/registro', formData);
       alert('¡Cuenta creada con éxito! Ahora inicia sesión.');
       navigate('/login'); 
     } catch (error) {
