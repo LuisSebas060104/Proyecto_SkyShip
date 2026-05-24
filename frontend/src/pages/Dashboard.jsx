@@ -45,7 +45,7 @@ function Dashboard() {
 
     const traerDatos = async () => {
       try {
-        const resEnvios = await axios.get('VITE_API_URL/api/shipments/mis-envios', {
+        const resEnvios = await axios.get(`${apiUrl}/api/shipments/mis-envios`, {
           headers: { 'x-auth-token': token }
         });
         setEnvios(resEnvios.data); 
@@ -65,7 +65,7 @@ function Dashboard() {
       // NUEVA LÓGICA: Unimos la región con la dirección exacta en un solo string
       const destinoCompleto = `${destino} | ${direccionExacta}`;
 
-      const respuesta = await axios.post('VITE_API_URL/api/shipments/crear', {
+      const respuesta = await axios.post(`${apiUrl}/api/shipments/crear`, {
         destino: destinoCompleto, // Se guarda todo junto en la DB
         costoEstimado: costoCalculado
       }, {
