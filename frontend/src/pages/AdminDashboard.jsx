@@ -1,13 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-const apiUrl = import.meta.env.VITE_API_URL;
 
 function AdminDashboard() {
   const [envios, setEnvios] = useState([]);
   const [usuarios, setUsuarios] = useState([]); 
-  const [vistaActiva, setVistaActiva] = useState('guias'); // 'guias' o 'usuarios'
+  const [contactos, setContactos] = useState([]); // NUEVO ESTADO PARA CONTACTOS
+  const [vistaActiva, setVistaActiva] = useState('guias'); // 'guias', 'usuarios' o 'contactos'
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,18 +15,29 @@ function AdminDashboard() {
       if (!token) return navigate('/login');
 
       try {
+        const apiUrl = import.meta.env.VITE_API_URL;
+
+        // 1. Traer Envíos
         const resEnvios = await axios.get(`${apiUrl}/api/shipments/todos`, {
           headers: { 'x-auth-token': token }
         });
         setEnvios(resEnvios.data);
 
+        // 2. Traer Usuarios
         const resUsuarios = await axios.get(`${apiUrl}/api/auth/usuarios`, {
           headers: { 'x-auth-token': token }
         });
         setUsuarios(resUsuarios.data);
 
+        // 3. Traer Contactos Comerciales (Ajusta la URL si en tu backend se llama distinto)
+        const resContactos = await axios.get(`${apiUrl}/api/contactos`, {
+          headers: { 'x-auth-token': token }
+        });
+        setContactos(resContactos.data);
+
       } catch (error) {
-        alert("Acceso denegado.");
+        console.error("Error cargando datos:", error);
+        alert("Acceso denegado o error de conexión.");
         navigate('/dashboard'); 
       }
     };
@@ -37,6 +47,7 @@ function AdminDashboard() {
   const cambiarEstado = async (id, nuevoEstado) => {
     try {
       const token = localStorage.getItem('token');
+      const apiUrl = import.meta.env.VITE_API_URL;
       await axios.put(`${apiUrl}/api/shipments/estado/${id}`, 
         { estado: nuevoEstado },
         { headers: { 'x-auth-token': token } }
@@ -51,6 +62,7 @@ function AdminDashboard() {
     if (!window.confirm("¿Eliminar esta guía permanentemente?")) return;
     try {
       const token = localStorage.getItem('token');
+      const apiUrl = import.meta.env.VITE_API_URL;
       await axios.delete(`${apiUrl}/api/shipments/${id}`, {
         headers: { 'x-auth-token': token }
       });
@@ -64,6 +76,7 @@ function AdminDashboard() {
     if (!window.confirm("¿Dar de baja a este usuario?")) return;
     try {
       const token = localStorage.getItem('token');
+      const apiUrl = import.meta.env.VITE_API_URL;
       await axios.delete(`${apiUrl}/api/auth/usuarios/${id}`, {
         headers: { 'x-auth-token': token }
       });
@@ -76,6 +89,12 @@ function AdminDashboard() {
   const cerrarSesion = () => {
     localStorage.removeItem('token');
     navigate('/login'); 
+  };
+
+  const formatearFecha = (fechaString) => {
+    if (!fechaString) return 'Sin fecha';
+    const opciones = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(fechaString).toLocaleDateString('es-GT', opciones);
   };
 
   // Estadísticas
@@ -106,13 +125,19 @@ function AdminDashboard() {
         .stat-card.success { border-top-color: #22c55e; }
 
         /* MENU DE SECCIONES (TABS) */
-        .tabs-container { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; }
+        .tabs-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; }
         .tab-button { padding: 1rem 2rem; border: none; background: white; border-radius: 6px; cursor: pointer; font-weight: 700; color: #64748b; transition: all 0.3s; border: 1px solid #e2e8f0; }
         .tab-button.active { background: #004b87; color: white; border-color: #004b87; }
 
         /* TARJETAS DE DATOS */
         .data-card { background: white; padding: 2rem; border-radius: 8px; border-top: 4px solid #EA580C; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .item-row { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border: 1px solid #f1f5f9; margin-bottom: 1rem; border-radius: 6px; flex-wrap: wrap; gap: 1rem; }
+        
+        /* ESTILOS PARA CONTACTOS */
+        .contacto-card { background: #f8fafc; padding: 1.5rem; border-left: 4px solid #3b82f6; border-radius: 6px; margin-bottom: 1rem; }
+        .contacto-header { display: flex; justify-content: space-between; margin-bottom: 0.8rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; }
+        .contacto-mensaje { color: #334155; font-style: italic; background: white; padding: 1rem; border-radius: 4px; border: 1px dashed #cbd5e1; }
+
         .badge { padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; }
         .badge-admin { background: #004b87; color: white; }
         .badge-client { background: #f1f5f9; color: #475569; }
@@ -127,7 +152,6 @@ function AdminDashboard() {
         <header className="dash-header">
           <h2>SkyShip Express - Administración</h2>
           <div>
-            
             <button onClick={() => navigate('/dashboard')} className="btn-nav-top">Portal Cliente</button>
             <button onClick={cerrarSesion} className="btn-nav-top btn-red">Cerrar Sesión</button>
           </div>
@@ -142,7 +166,7 @@ function AdminDashboard() {
           <div className="stat-card success"><div>Entregados</div><div style={{fontSize:'2rem', fontWeight:'900', color:'#22c55e'}}>{stats.entregados}</div></div>
         </div>
 
-        {/* MENÚ DE PESTAÑAS */}
+        {/* MENÚ DE PESTAÑAS (AHORA CON 3 BOTONES) */}
         <div className="tabs-container">
           <button 
             className={`tab-button ${vistaActiva === 'guias' ? 'active' : ''}`} 
@@ -154,14 +178,23 @@ function AdminDashboard() {
             className={`tab-button ${vistaActiva === 'usuarios' ? 'active' : ''}`} 
             onClick={() => setVistaActiva('usuarios')}
           >
-            Control de Usuarios Registrados
+            Control de Usuarios
+          </button>
+          <button 
+            className={`tab-button ${vistaActiva === 'contactos' ? 'active' : ''}`} 
+            onClick={() => setVistaActiva('contactos')}
+          >
+            Contactos Comerciales
           </button>
         </div>
 
         {/* CONTENIDO CONDICIONAL */}
         <div className="data-card">
-          {vistaActiva === 'guias' ? (
+          
+          {/* VISTA 1: GUÍAS DE ENVÍO */}
+          {vistaActiva === 'guias' && (
             <div>
+              {envios.length === 0 ? <p style={{textAlign:'center', color:'#64748b'}}>No hay guías registradas.</p> : null}
               {envios.map(envio => (
                 <div key={envio._id} className="item-row">
                   <div>
@@ -178,8 +211,12 @@ function AdminDashboard() {
                 </div>
               ))}
             </div>
-          ) : (
+          )}
+
+          {/* VISTA 2: USUARIOS */}
+          {vistaActiva === 'usuarios' && (
             <div>
+              {usuarios.length === 0 ? <p style={{textAlign:'center', color:'#64748b'}}>No hay usuarios registrados.</p> : null}
               {usuarios.map(user => (
                 <div key={user._id} className="item-row">
                   <div>
@@ -201,6 +238,33 @@ function AdminDashboard() {
               ))}
             </div>
           )}
+
+          {/* VISTA 3: CONTACTOS COMERCIALES (NUEVA) */}
+          {vistaActiva === 'contactos' && (
+            <div>
+              {contactos.length === 0 ? (
+                <p style={{textAlign:'center', color:'#64748b', padding:'2rem'}}>No hay mensajes de contacto comercial por el momento.</p>
+              ) : (
+                contactos.map(contacto => (
+                  <div key={contacto._id} className="contacto-card">
+                    <div className="contacto-header">
+                      <div>
+                        <strong style={{fontSize:'1.1rem', color:'#0f172a'}}>{contacto.nombre}</strong>
+                        <div style={{fontSize:'0.9rem', color:'#64748b'}}>✉️ {contacto.correo}</div>
+                      </div>
+                      <div style={{fontSize:'0.85rem', color:'#94a3b8', fontWeight:'bold'}}>
+                        {formatearFecha(contacto.fecha)}
+                      </div>
+                    </div>
+                    <div className="contacto-mensaje">
+                      "{contacto.mensaje}"
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+
         </div>
       </main>
     </>
