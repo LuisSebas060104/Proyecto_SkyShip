@@ -146,6 +146,12 @@ function AdminDashboard() {
         .bg-blue { background: #004b87; }
         .bg-green { background: #166534; }
         .bg-red { background: #9B2236; }
+
+        .btn-action:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+          filter: grayscale(50%);
+        }
       `}</style>
 
       <div className="header-wrapper">
